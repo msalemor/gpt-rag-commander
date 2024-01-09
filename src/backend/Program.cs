@@ -1,22 +1,25 @@
 using backend.Models;
 using backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using Azure.AI.OpenAI;
-using Azure;
 using dotenv.net;
+using Microsoft.SemanticKernel.Plugins.Memory;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Connectors.AI.OpenAI;
 
 DotEnv.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-var api_URI = Environment.GetEnvironmentVariable("OPENAI_API_URI")!;
-var api_key = Environment.GetEnvironmentVariable("OPENAI_API_KEY")!;
+var endpoint = Environment.GetEnvironmentVariable("OPENAI_API_URI")!;
+var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")!;
 var api_model = Environment.GetEnvironmentVariable("OPENAI_API_GPT")!;
 
-Uri azureOpenAIResourceUri = new(api_URI);
-AzureKeyCredential azureOpenAIApiKey = new(api_key);
-OpenAIClient client;
-client = new(azureOpenAIResourceUri, azureOpenAIApiKey);
+var ramStore = new VolatileMemoryStore();
+
+var kernel = new KernelBuilder()
+            .WithAzureOpenAIChatCompletionService("gpt", endpoint, apiKey)
+            .WithAzureOpenAITextEmbeddingGenerationService("ada", endpoint, apiKey)
+            .Build();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -34,6 +37,7 @@ builder.Services.AddSingleton<ITextSplitter<SKSplitter>, SplitBySkSplitter>();
 builder.Services.AddSingleton<ITextSplitter<SKSplitterTiktoken>, SplitBySkSplitterTiktoken>();
 builder.Services.AddSingleton<ITextSplitter<ParagraphSplitter>, SplitByParagraph>();
 builder.Services.AddSingleton<ITextSplitter<ParagraphWordsSplitter>, SplitByParagraphWords>();
+builder.Services.AddSingleton(kernel);
 
 var tikToken = Tiktoken.Encoding.ForModel("gpt-4");
 
@@ -127,27 +131,24 @@ group.MapPost("/load", async ([FromBody] UrlFileRequest request, HttpClient clie
 .WithOpenApi();
 
 
-group.MapPost("/completion", async ([FromBody] CompletionRequest request) =>
+group.MapPost("/completion", async ([FromBody] CompletionRequest request, IKernel? kernel) =>
 {
     if (string.IsNullOrEmpty(request.prompt))
     {
         return Results.BadRequest(new { message = "Prompt cannot be empty" });
     }
 
-    var chatCompletionsOptions = new ChatCompletionsOptions()
+    if (kernel is null)
     {
-        DeploymentName = api_model, // Use DeploymentName for "model" with non-Azure clients
-        Messages =
-        {
-            // User messages represent current or historical input from the end user
-            new ChatRequestUserMessage(request.prompt),
-        },
-        MaxTokens = request.max_tokens,
-        Temperature = request.temperature
-    };
-    Response<ChatCompletions> response = await client.GetChatCompletionsAsync(chatCompletionsOptions);
-    ChatResponseMessage responseMessage = response.Value.Choices[0].Message;
-    return Results.Ok(new CompletionResponse(responseMessage.Content));
+        return Results.BadRequest(new { message = "Kernel cannot be null" });
+    }
+
+    ISKFunction salesDescriptionFunc = kernel.CreateSemanticFunction(request.prompt,
+        new OpenAIRequestSettings() { MaxTokens = request.max_tokens, Temperature = request.temperature, TopP = 1 });
+
+    var result = await kernel.RunAsync("", salesDescriptionFunc);
+
+    return Results.Ok(new CompletionResponse(result.ToString()));
 })
 .Produces<UrlFileResponse>(StatusCodes.Status200OK)
 .Produces(StatusCodes.Status400BadRequest)
@@ -155,21 +156,23 @@ group.MapPost("/completion", async ([FromBody] CompletionRequest request) =>
 .WithOpenApi();
 
 
-group.MapPost("/reconfigure", ([FromBody] ReconfigureRequest request) =>
-{
-    if (string.IsNullOrEmpty(request.uri) || string.IsNullOrEmpty(request.key) || string.IsNullOrEmpty(request.model))
-    {
-        return Results.BadRequest(new { message = "URI, API Key, and model cannot be empty" });
-    }
-    client = new(new Uri(request.uri), new AzureKeyCredential(request.key));
-    api_model = request.model;
+// group.MapPost("/reconfigure", ([FromBody] ReconfigureRequest request) =>
+// {
+//     if (string.IsNullOrEmpty(request.uri) || string.IsNullOrEmpty(request.key) || string.IsNullOrEmpty(request.model))
+//     {
+//         return Results.BadRequest(new { message = "URI, API Key, and model cannot be empty" });
+//     }
 
-    return Results.Ok();
-})
-.Produces<UrlFileResponse>(StatusCodes.Status200OK)
-.Produces(StatusCodes.Status400BadRequest)
-.WithName("PostReconfigure")
-.WithOpenApi();
+
+//     client = new(new Uri(request.uri), new AzureKeyCredential(request.key));
+//     api_model = request.model;
+
+//     return Results.Ok();
+// })
+// .Produces<UrlFileResponse>(StatusCodes.Status200OK)
+// .Produces(StatusCodes.Status400BadRequest)
+// .WithName("PostReconfigure")
+// .WithOpenApi();
 
 
 //app.MapControllers();
