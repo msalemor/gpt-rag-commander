@@ -5,6 +5,7 @@ interface ISettings {
     wordCount: string
     method: string
     chunks: string
+    relevance: string
     prompt: string
     max_tokens: string
     temperature: string
@@ -18,4 +19,20 @@ interface IChunk {
 
 interface IParseCompletion {
     chunks: IChunk[]
+}
+
+interface IMemoryChunkInfo {
+    userName: string
+    fileName: string
+    chunkId: string
+    text: string
+    tokenCount: number
+    embedding: string
+}
+
+interface IQueryResponse {
+    collection: string
+    context: string
+    completion: string
+    memories: IMemoryChunkInfo[]
 }

@@ -67,10 +67,14 @@ At [Company Name], we are committed to providing a competitive and comprehensive
 
 Please note that this policy is not intended to create a contractual obligation between [Company Name] and its employees, and the company reserves the right to interpret and administer the benefits program in its sole discretion.`
 
-export const samplePrompt = `System:
-You are a corporate knowledge assistant. Answer the user's questions with the provided data only. If you cannot answer the question say, "I do not have this information." After every interaction say, "NOTE: Please make sure to follow proper procedures and documentation."
+// export const samplePrompt = `System:
+// You are a corporate HR knowledge assistant. Answer the user's questions with the provided text only. If you cannot answer the question say, "I do not have this information." After every interaction say, "NOTE: Please make sure to follow proper procedures and documentation."
 
-User:
-In one paragraph, what is the process to request a medical leave?
+// User:
+// Text: """
+// <CONTEXT>
+// """
 
-<CONTEXT>`
+// What are some company benefits?`
+
+export const samplePrompt = `In one paragraph, what are some company benefits?`
