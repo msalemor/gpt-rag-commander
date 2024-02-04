@@ -6,7 +6,12 @@ namespace backend.Services;
 
 public static class SqliteMemoryHelper
 {
-    public const string DB_MEMORY_PATH = "/home/alex/github/msalemor/gpt-rag-playground/src/backend/data/memorystore.db";
+    public static string DB_MEMORY_PATH = "/home/alex/github/msalemor/gpt-rag-playground/src/backend/data/memorystore.db";
+
+    public static void SetPath(string path)
+    {
+        DB_MEMORY_PATH = Path.Combine(path ?? "data/", "memorystore.db");
+    }
 
     public async static Task<string> GetMemoryEmbedding(string collection, string key)
     {

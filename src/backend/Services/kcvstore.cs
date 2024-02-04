@@ -5,10 +5,11 @@ namespace backend.Services;
 
 public static class KCVStore
 {
-    public const string DB_PATH = "/home/alex/github/msalemor/gpt-rag-playground/src/backend/data/kcvstore.db";
+    public static string DB_PATH = "/home/alex/github/msalemor/gpt-rag-playground/src/backend/data/kcvstore.db";
 
-    public static async Task CreateStore()
+    public static async Task CreateStore(string path)
     {
+        DB_PATH = Path.Combine(path ?? "data/", "kcvstore.db");
         using var connection = new SqliteConnection("Data Source=" + DB_PATH);
         connection.Open();
 

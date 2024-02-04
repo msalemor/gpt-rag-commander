@@ -78,3 +78,14 @@ Please note that this policy is not intended to create a contractual obligation 
 // What are some company benefits?`
 
 export const samplePrompt = `In one paragraph, what are some company benefits?`
+
+export function uuidv4() {
+  let userId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+    .replace(/[xy]/g, function (c) {
+      const r = Math.random() * 16 | 0,
+        v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  userId = userId.replace(/-/g, '')
+  return "user_" + userId.substring(userId.length - 12)
+}

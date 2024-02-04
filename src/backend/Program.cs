@@ -8,15 +8,19 @@ using Microsoft.SemanticKernel.Memory;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Connectors.Sqlite;
 using System.Text;
-using Json.Schema;
 
-await KCVStore.CreateStore();
-
+// Load the either the .env file or the environment variables
 DotEnv.Load();
 var endpoint = Environment.GetEnvironmentVariable("OPENAI_API_URI")!;
 var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY")!;
 var gptDeploymentName = Environment.GetEnvironmentVariable("OPENAI_API_GPT")!;
 var adaDeploymentName = Environment.GetEnvironmentVariable("OPENAI_API_ADA")!;
+var kcvDbStorePath = Environment.GetEnvironmentVariable("DB_KVC_STORE_PATH")!;
+var memoryDbPath = Environment.GetEnvironmentVariable("DB_MEMORY_PATH")!;
+
+// Create the KCVStore and the memory store
+await KCVStore.CreateStore(kcvDbStorePath);
+SqliteMemoryHelper.SetPath(memoryDbPath);
 
 if (endpoint is null || apiKey is null || gptDeploymentName is null || adaDeploymentName is null)
 {
@@ -24,6 +28,7 @@ if (endpoint is null || apiKey is null || gptDeploymentName is null || adaDeploy
     Environment.Exit(1);
 }
 
+// Create the web application
 var builder = WebApplication.CreateBuilder(args);
 
 

@@ -7,7 +7,7 @@ clean:
 
 build-ui: clean
 	@echo "Build UI"
-	cd src/frontend && npm run build
+	cd src/frontend && npm run build-prod
 	cp -r src/frontend/dist/* src/backend/wwwroot
 
 dev-backend:
@@ -18,21 +18,21 @@ run-ui:
 	@echo "Run UI"	
 	cd src/frontend && bun run dev
 
-TAG=0.0.3t4
-docker: build-ui
+TAG=0.0.3
+docker-build: build-ui
 	@echo "Docker"
-	cd src/backend && docker build . -t am8850/gptchunker:$(TAG)
+	cd src/backend && docker build . -t am8850/gptragplayground:$(TAG)
 
-docker-run: docker
+docker-run: docker-build
 	@echo "Docker run"
-	docker run --rm -p 8080:80 am8850/gptchunker:$(TAG)
+	cd src/backend && docker run --rm -p 8080:8080 --env-file=.env-local am8850/gptragplayground:$(TAG)
+
+docker-push: docker-build
+	docker push am8850/gptragplayground:${TAG}
 
 RG_NAME=rg-skragc-poc-eus
 APP_NAME=tokenizer
-IMAGE_NAME=am8850/tokensplitter:$(TAG)
-docker-push: docker
-	docker push am8850/gptchunker:${TAG}
-
+IMAGE_NAME=am8850/gptragplayground:$(TAG)
 docker-deploy: docker-push	
 	az webapp config container set --name $(APP_NAME) --resource-group ${RG_NAME} --docker-custom-image-name ${IMAGE_NAME}
 	sleep 2
