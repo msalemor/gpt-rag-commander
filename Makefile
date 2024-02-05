@@ -18,7 +18,7 @@ run-ui:
 	@echo "Run UI"	
 	cd src/frontend && bun run dev
 
-TAG=0.0.6
+TAG=0.0.8
 docker-build: build-ui
 	@echo "Docker"
 	cd src/backend && docker build . -t am8850/gptragplayground:$(TAG)

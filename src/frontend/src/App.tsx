@@ -28,7 +28,7 @@ const DefaultSettings: ISettings = {
   url: ""
 }
 
-const BASE_URI = import.meta.env.VITE_BASE_URI;//"http://localhost:5096/"
+const BASE_URI = import.meta.env.VITE_BASE_URI//"http://localhost:5096/"
 const URI_CHUNK = BASE_URI + "api/v1/content/split"
 const URI_LOAD = BASE_URI + "api/v1/content/load"
 //const URI_COMPLETION = BASE_URI + "api/v1/content/completion"
@@ -475,6 +475,10 @@ function App() {
         <button class="bg-red-700 text-white p-1 hover:bg-red-600 hover:text-white font-semibold rounded-md"
           onclick={ResetSessionAndUser}
         >Reset</button>
+        <a class="text-text text-white font-semibold text-sm hover:underline" href={import.meta.env.VITE_SAMPLE_RAG} target="_blank">[RAG Notebook]</a>
+        <a class="text-text text-white font-semibold text-sm hover:underline" href="https://github.com/Azure-Samples/azure-search-openai-demo-csharp" target="_blank">[RAG C# App]</a>
+        <a class="text-text text-white font-semibold text-sm hover:underline" href="https://github.com/Azure-Samples/azure-search-openai-demo" target="_blank">[RAG Py App]</a>
+        <a class="text-text text-white font-semibold text-sm hover:underline" href={import.meta.env.VITE_SUMMARIZATION_RAG} target="_blank">[Summarization Notebook]</a>
       </section>
     </>
   )
