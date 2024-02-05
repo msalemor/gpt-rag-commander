@@ -326,7 +326,7 @@ Text: """"""
     var result = await kernel.InvokeAsync(excuseFunction);
     var content = result.GetValue<string>();
 
-    return Results.Ok(new QueryResponse(query.collection, contextSb.ToString(), content ?? "", memoryChunks));
+    return Results.Ok(new QueryResponse(query.collection, contextSb.ToString(), content ?? "", memoryChunks, prompt));
 })
 .WithName("SearchCollection")
 .WithOpenApi();

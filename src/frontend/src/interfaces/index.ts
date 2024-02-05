@@ -35,4 +35,5 @@ interface IQueryResponse {
     context: string
     completion: string
     memories: IMemoryChunkInfo[]
+    fullPrompt: string
 }

@@ -1,11 +1,11 @@
-import axios from "axios"
 import { createSignal } from "solid-js"
 import { encode } from 'gpt-tokenizer'
 import { makePersisted } from "@solid-primitives/storage"
 import { sample1, sample2, samplePrompt, uuidv4 } from "./components"
 import { Header } from "./components/Header"
-import { Information } from "./components/Information"
+//import { Information } from "./components/Information"
 import EmbeddingsArea from "./components/embeddingarea"
+import axios from "axios"
 
 const SplittingMethod = {
   SK: "SK",
@@ -53,6 +53,7 @@ function App() {
   //const [useContext, _] = createSignal(true)
   const [tab, setTab] = createSignal('chunk')
   const [userId, setUserId] = makePersisted(createSignal(uuidv4()))
+  const [fullPrompt, setFullPrompt] = createSignal("")
 
   const getTokenCountAfterTyping = (value: string, control: string) => {
     if (control === "chunk") {
@@ -168,7 +169,15 @@ function App() {
 
   const ProcessPrompt = async () => {
     if (processing()) return
-    // Use a template form    
+    // Use a template form
+    if (!settings().prompt) {
+      alert("Prompt please enter a prompt")
+      return
+    }
+    if (allMemories().length == 0) {
+      alert("Please paste two documents in the Text area and and embed them first.")
+      return
+    }
     const payload = {
       collection: userId(),
       prompt: settings().prompt,
@@ -187,6 +196,7 @@ function App() {
       setContext(data.context)
       setCompletion(data.completion)
       setUsedMemories(data.memories)
+      setFullPrompt(data.fullPrompt)
       setTab("completion")
       UpdateTokenCounts()
     } catch (err) {
@@ -222,6 +232,7 @@ function App() {
     setPromptButtonLabel("Process")
     setUserId(uuidv4())
     setTab("chunk")
+    setFullPrompt("")
     setProcessing(false)
   }
 
@@ -234,7 +245,7 @@ function App() {
           <input
             value={settings().url}
             onInput={(e) => setSettings({ ...settings(), url: e.currentTarget.value })}
-            class="px-1 md:w-[500px] w-[90%] text-black" type="text" />
+            class="px-1 md:w-[500px] w-[90%] text-black outline-none" type="text" />
           <button
             onClick={LoadFile}
             class="p-2 bg-green-800 hover:bg-green-700 font-semibold rounded">Load</button>
@@ -306,34 +317,34 @@ function App() {
                 <input
                   value={settings().maxTokensPerLine}
                   onInput={(e) => setSettings({ ...settings(), maxTokensPerLine: e.currentTarget.value })}
-                  class="w-20 px-1 text-black" type="text" />
+                  class="w-20 px-1 text-black outline-none" type="text" />
               </div>
               <div class="space-x-2" hidden={settings().method == SplittingMethod.Paragraph || settings().method == SplittingMethod.ParagraphWords}>
                 <label>Tokens/Paragraph:</label>
                 <input
                   value={settings().maxTokensPerParagraph}
                   onInput={(e) => setSettings({ ...settings(), maxTokensPerParagraph: e.currentTarget.value })}
-                  class="w-20 px-1 text-black" type="text" />
+                  class="w-20 px-1 text-black outline-none" type="text" />
               </div>
               <div class="space-x-2" hidden={settings().method == SplittingMethod.Paragraph || settings().method == SplittingMethod.ParagraphWords}>
                 <label>Overlap Tokens:</label>
                 <input
                   value={settings().overlapTokens}
                   onInput={(e) => setSettings({ ...settings(), overlapTokens: e.currentTarget.value })}
-                  class="w-20 px-1 text-black" type="text" />
+                  class="w-20 px-1 text-black outline-none" type="text" />
               </div>
               <div class="space-x-2" hidden={settings().method == SplittingMethod.Paragraph || settings().method == SplittingMethod.SK || settings().method == SplittingMethod.SKTIKTOKEN}>
                 <label>Word Count:</label>
                 <input
                   value={settings().wordCount}
                   onInput={(e) => setSettings({ ...settings(), wordCount: e.currentTarget.value })}
-                  class="w-20 px-1 text-black" type="text" />
+                  class="w-20 px-1 text-black outline-none" type="text" />
               </div>
             </div>
             <div class="flex flex-col bg-white space-y-2 p-2">
               <div class="flex flex-row flex-wrap">
                 <div class="flex flex-col w-1/2 p-1">
-                  <label class='font-bold uppercase'>File 1: <span class="font-bold bg-blue-800 rounded-xl text-white p-1">{file1Tokens()}</span></label>
+                  <label class='font-bold uppercase'>File 1: <span class="font-bold bg-blue-800 rounded-xl text-white px-1">{file1Tokens()}</span></label>
                   <textarea
                     class="border border-black p-2 round-lg"
                     value={contentFile1()}
@@ -342,7 +353,7 @@ function App() {
                   </textarea>
                 </div>
                 <div class="flex flex-col w-1/2 p-1">
-                  <label class='font-bold uppercase'>File 2: <span class="font-bold bg-blue-800 rounded-xl text-white p-1">{file2Tokens()}</span></label>
+                  <label class='font-bold uppercase'>File 2: <span class="font-bold bg-blue-800 rounded-xl text-white px-1">{file2Tokens()}</span></label>
                   <textarea
                     value={contentFile2()}
                     onInput={(e) => { getTokenCountAfterTyping(e.currentTarget.value, "chunk2") }}
@@ -359,7 +370,7 @@ function App() {
                   onClick={LoadSampleFilesAndProcess}
                   class="p-2 bg-green-800 hover:bg-green-700 text-white font-semibold">Load Samples & Embed</button>
               </div>
-              <Information />
+              {/* <Information /> */}
             </div>
           </section>
           <section hidden={tab() !== "context"}>
@@ -380,37 +391,51 @@ function App() {
             <div>
               <div class="bg-blue-900 p-1 text-white space-x-1">
                 <label class='uppercase'>Max Tokens:</label>
-                <input class="w-20 px-1 text-black"
+                <input class="w-20 px-1 text-black outline-none"
                   value={settings().max_tokens}
                   oninput={(e) => setSettings({ ...settings(), max_tokens: e.currentTarget.value })}
                 />
                 <label class='uppercase'>Temperature:</label>
-                <input class="w-20 px-1 text-black"
+                <input class="w-20 px-1 text-black outline-none"
                   value={settings().temperature}
                   oninput={(e) => setSettings({ ...settings(), temperature: e.currentTarget.value })}
                 />
                 <label class='uppercase'>Limit:</label>
-                <input class="w-20 px-1 text-black"
+                <input class="w-20 px-1 text-black outline-none"
                   value={settings().chunks}
                   oninput={(e) => setSettings({ ...settings(), chunks: e.currentTarget.value })}
                 />
                 <label class='uppercase'>Relevance:</label>
-                <input class="w-20 px-1 text-black"
+                <input class="w-20 px-1 text-black outline-none"
                   value={settings().relevance}
                   oninput={(e) => setSettings({ ...settings(), relevance: e.currentTarget.value })}
                 />
               </div>
             </div>
-            <div class="flex flex-col space-y-2 mt-2 p-2">
-              <textarea
-                class="border border-black p-2 round-lg"
-                value={settings().prompt}
-                onInput={(e) => getTokenCountAfterTyping(e.currentTarget.value, "prompt")}
-                rows={20}>
-              </textarea>
-              <div class="p-2 bg-yellow-100">
-                <p><strong>Note: </strong>the additional context will be added automatically at the end of the Prompt. If you need to set a specific placement, use the &lt;CONTEXT&gt; placeholder. This placeholder will be replaced in the final Prompt at the specific location.</p>
+            <div class="flex flex-col space-y-2 mt-2">
+              <div class="flex">
+                <div class="flex flex-col w-1/2 p-1">
+                  <label class="uppercase font-semibold">Prompt:</label>
+                  <textarea
+                    class="border border-black p-2 round-lg w-full outline-none"
+                    value={settings().prompt}
+                    onInput={(e) => getTokenCountAfterTyping(e.currentTarget.value, "prompt")}
+                    rows={10}>
+                  </textarea>
+                </div>
+                <div class="flex flex-col w-1/2 p-1">
+                  <label class="uppercase font-semibold">Fully Generated Prompt:</label>
+                  <textarea
+                    class="border bg-slate-200 outline-none round-lg w-full p-2"
+                    value={fullPrompt()}
+                    rows={25}>
+                    readOnly
+                  </textarea>
+                </div>
               </div>
+              {/* <div class="p-2 bg-yellow-100">
+                <p><strong>Note: </strong>the additional context will be added automatically at the end of the Prompt. If you need to set a specific placement, use the &lt;CONTEXT&gt; placeholder. This placeholder will be replaced in the final Prompt at the specific location.</p>
+              </div> */}
               <div class="space-x-2">
                 <button class="p-2 w-24 bg-blue-900 hover:bg-blue-700 text-white font-semibold"
                   onclick={ProcessPrompt}
@@ -446,7 +471,7 @@ function App() {
       </div>
       <section class={"flex h-[35px] space-x-2 items-center px-2 " + (processing() ? "bg-red-600" : "bg-slate-800")}>
         <label class="text-white">ID:</label>
-        <input class="px-1 text-black text-sm h-[24px] bg-slate-300" readOnly type="text" value={userId()} />
+        <input class="px-1 text-black text-sm h-[24px] bg-slate-300 outline-none" readOnly type="text" value={userId()} />
         <button class="bg-red-700 text-white p-1 hover:bg-red-600 hover:text-white font-semibold rounded-md"
           onclick={ResetSessionAndUser}
         >Reset</button>
