@@ -18,21 +18,21 @@ run-ui:
 	@echo "Run UI"	
 	cd src/frontend && bun run dev
 
-TAG=0.0.8
+TAG=0.0.1
 docker-build: build-ui
 	@echo "Docker"
-	cd src/backend && docker build . -t am8850/gptragplayground:$(TAG)
+	cd src/backend && docker build . -t am8850/ragcommander:$(TAG)
 
 docker-run: docker-build
 	@echo "Docker run"
-	cd src/backend && docker run --rm -p 8080:8080 --env-file=.env-local am8850/gptragplayground:$(TAG)
+	cd src/backend && docker run --rm -p 8080:8080 --env-file=.env-local am8850/ragcommander:$(TAG)
 
 docker-push: docker-build
-	docker push am8850/gptragplayground:${TAG}
+	docker push am8850/ragcommander:${TAG}
 
 RG_NAME=rg-skragc-poc-eus
 APP_NAME=tokenizer
-IMAGE_NAME=am8850/gptragplayground:$(TAG)
+IMAGE_NAME=am8850/ragcommander:$(TAG)
 docker-deploy: docker-push	
 	az webapp config container set --name $(APP_NAME) --resource-group ${RG_NAME} --docker-custom-image-name ${IMAGE_NAME}
 	sleep 2

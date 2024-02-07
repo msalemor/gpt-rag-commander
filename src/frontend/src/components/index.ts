@@ -13,12 +13,16 @@ Employees who wish to request medical leave or leave of absence must follow thes
 - Keep in touch with their supervisor and the human resources department during their leave and inform them of any changes in their situation or return date.
 - Return to work on the agreed date and resume their duties and responsibilities.
 - Employees who take medical leave or leave of absence are entitled to certain benefits and protections, such as:
+
 Continuation of their health insurance coverage and other benefits during their leave, subject to the terms and conditions of the benefit plans.
+
 - Restoration of their original or equivalent position upon their return, unless their position is eliminated due to business reasons or they are unable to perform their essential functions.
 - Protection from discrimination, harassment, retaliation, or interference for exercising their right to take leave.
-- Employees who take medical leave or leave of absence are expected to comply with certain obligations and expectations, such as:
-  - Using their leave for the intended purpose and not engaging in any activities that are inconsistent with their reason for leave.
-  - Following the company's policies and procedures regarding attendance, performance, conduct, and communication during their leave.
+
+Employees who take medical leave or leave of absence are expected to comply with certain obligations and expectations, such as:
+
+- Using their leave for the intended purpose and not engaging in any activities that are inconsistent with their reason for leave.
+- Following the company's policies and procedures regarding attendance, performance, conduct, and communication during their leave.
 - Cooperating with the company's requests for information or verification regarding their leave status or eligibility.
 - Returning any company property or equipment that they have in their possession before or during their leave.
 
@@ -29,7 +33,7 @@ Company XYZ
 
 
 Introduction
-At XYZ, we believe that our employees are our most valuable asset. We are committed to providing a comprehensive and competitive benefits package to attract and retain top talent. This policy outlines the various benefits available to our employees, including paid vacation, paid insurance and dental, 401K, and others.
+At Company XYZ, we believe that our employees are our most valuable asset. We are committed to providing a comprehensive and competitive benefits package to attract and retain top talent. This policy outlines the various benefits available to our employees, including paid vacation, paid insurance and dental, 401K, and others.
 
 Paid Vacation
 We recognize the importance of work-life balance and understand that employees need time off to relax, recharge, and spend quality time with their loved ones. Therefore, we offer a generous paid vacation policy to all eligible employees. The specific details of the paid vacation policy, including accrual rates, eligibility criteria, and request procedures, will be outlined in the Employee Handbook.
@@ -53,19 +57,22 @@ d. Professional Development: We believe in fostering continuous learning and gro
 
 e. Employee Recognition Programs: We value the hard work and dedication of our employees. To acknowledge their contributions, we may implement employee recognition programs, such as employee of the month/year awards, spot bonuses, or team-building activities.
 
-Communication and Administration
+Communication and Administration:
+
 We understand the importance of clear communication and efficient administration of our benefits program. Therefore, we will provide employees with detailed information about their benefits, including eligibility requirements, enrollment procedures, and any changes or updates to the benefits program. This information will be communicated through various channels, such as employee handbooks, company intranet, or direct communication from the HR department.
 
-Compliance with Applicable Laws and Regulations
+Compliance with Applicable Laws and Regulations:
+
 We are committed to complying with all applicable laws and regulations governing employee benefits, including but not limited to the Employee Retirement Income Security Act (ERISA), the Affordable Care Act (ACA), and the Health Insurance Portability and Accountability Act (HIPAA). We will regularly review and update our benefits policies and procedures to ensure compliance with these laws and regulations.
 
-Modification or Termination of Benefits
+Modification or Termination of Benefits:
+
 While we strive to provide a comprehensive benefits package, we reserve the right to modify or terminate any benefits at our discretion. Any changes to the benefits program will be communicated to employees in a timely manner, and we will make reasonable efforts to minimize any adverse impact on employees.
 
 Conclusion
-At [Company Name], we are committed to providing a competitive and comprehensive benefits package to support the well-being and satisfaction of our employees. This policy serves as a guideline for the benefits we offer, and we will continue to review and enhance our benefits program to meet the evolving needs of our workforce.
+At Company XYZ, we are committed to providing a competitive and comprehensive benefits package to support the well-being and satisfaction of our employees. This policy serves as a guideline for the benefits we offer, and we will continue to review and enhance our benefits program to meet the evolving needs of our workforce.
 
-Please note that this policy is not intended to create a contractual obligation between [Company Name] and its employees, and the company reserves the right to interpret and administer the benefits program in its sole discretion.`
+Please note that this policy is not intended to create a contractual obligation between Company XYZ and its employees, and the company reserves the right to interpret and administer the benefits program in its sole discretion.`
 
 // export const samplePrompt = `System:
 // You are a corporate HR knowledge assistant. Answer the user's questions with the provided text only. If you cannot answer the question say, "I do not have this information." After every interaction say, "NOTE: Please make sure to follow proper procedures and documentation."

@@ -28,7 +28,7 @@ const DefaultSettings: ISettings = {
   url: ""
 }
 
-const BASE_URI = import.meta.env.VITE_BASE_URI//"http://localhost:5096/"
+const BASE_URI = import.meta.env.VITE_BASE_URI //"http://localhost:5096/"
 const URI_CHUNK = BASE_URI + "api/v1/content/split"
 const URI_LOAD = BASE_URI + "api/v1/content/load"
 //const URI_COMPLETION = BASE_URI + "api/v1/content/completion"
