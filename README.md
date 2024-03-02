@@ -1,2 +1,2 @@
-# gpt-rag-playground
+# RAG Commander
 A GPT RAG Pattern playground
